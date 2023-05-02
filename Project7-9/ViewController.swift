@@ -11,15 +11,26 @@ class ViewController: UIViewController {
     
     var currentAnswer: UILabel!
     var submitButton: UIButton!
+    var arrayData = [String]()
+    var usedLetters = [String]()
     
     var life = 8 {
         didSet {
             title = "Life: \(life)"
         }
     }
+    
     var score = 0 {
         didSet {
             navigationItem.rightBarButtonItem = UIBarButtonItem(title: "Score: \(score)")
+        }
+    }
+    
+    var word = "RHYTHM" {
+        didSet {
+            DispatchQueue.main.async {
+                self.currentAnswer.text! = String(repeating: "?", count: self.word.count)
+            }
         }
     }
     
@@ -58,6 +69,16 @@ class ViewController: UIViewController {
             submitButton.centerXAnchor.constraint(equalTo: currentAnswer.centerXAnchor)
         ])
            
+        loadData()
+    }
+    
+    @objc func loadData() {
+        if let urlString = Bundle.main.url(forResource: "start", withExtension: "txt") {
+            if let data = try? String(contentsOf: urlString) {
+                arrayData = data.components(separatedBy: "\n")
+                word = arrayData[0].uppercased()
+            }
+        }
     }
     
 }
