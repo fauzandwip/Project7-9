@@ -55,6 +55,7 @@ class ViewController: UIViewController {
         submitButton.titleLabel?.numberOfLines = 1
         submitButton.titleLabel?.font = UIFont.systemFont(ofSize: 24, weight: .heavy)
         submitButton.layer.cornerRadius = 20
+        submitButton.addTarget(self, action: #selector(guessButtonTapped), for: .touchUpInside)
         view.addSubview(submitButton)
         
         NSLayoutConstraint.activate([
@@ -79,6 +80,32 @@ class ViewController: UIViewController {
                 word = arrayData[0].uppercased()
             }
         }
+    }
+    
+    @objc func guessButtonTapped() {
+        let ac = UIAlertController(title: "Type 1 Letter", message: "Can't more than 1 letter", preferredStyle: .alert)
+        ac.addTextField()
+        
+        let submitButton = UIAlertAction(title: "Submit", style: .default) { [weak self, weak ac] action in
+            guard let letter = ac?.textFields?[0].text else { return }
+            if !(letter.count == 1) {
+                self?.showError()
+            }
+        }
+        ac.addAction(submitButton)
+        
+        present(ac, animated: true)
+    }
+    
+    func showError() {
+        let ac = UIAlertController(title: "Invalid", message: "You should only type 1 letter!", preferredStyle: .alert)
+        
+        let okButton = UIAlertAction(title: "OK", style: .default) { [weak self] action in
+            self?.guessButtonTapped()
+        }
+        ac.addAction(okButton)
+        
+        present(ac, animated: true)
     }
     
 }
