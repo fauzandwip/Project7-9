@@ -12,8 +12,22 @@ class ViewController: UIViewController {
     var currentAnswer: UILabel!
     var submitButton: UIButton!
     
+    var life = 8 {
+        didSet {
+            title = "Life: \(life)"
+        }
+    }
+    var score = 0 {
+        didSet {
+            navigationItem.rightBarButtonItem = UIBarButtonItem(title: "Score: \(score)")
+        }
+    }
+    
     override func viewDidLoad() {
         super.viewDidLoad()
+        
+        title = "Life: \(life)"
+        navigationItem.rightBarButtonItem = UIBarButtonItem(title: "Score: \(score)")
         
         currentAnswer = UILabel()
         currentAnswer.text = "????????"
