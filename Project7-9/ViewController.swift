@@ -28,9 +28,7 @@ class ViewController: UIViewController {
     
     var word = "RHYTHM" {
         didSet {
-            DispatchQueue.main.async {
-                self.currentAnswer.text! = String(repeating: "?", count: self.word.count)
-            }
+            currentAnswer.text! = String(repeating: "?", count: word.count)
         }
     }
     
@@ -39,6 +37,7 @@ class ViewController: UIViewController {
         
         title = "Life: \(life)"
         navigationItem.rightBarButtonItem = UIBarButtonItem(title: "Score: \(score)")
+        navigationItem.leftBarButtonItem = UIBarButtonItem(barButtonSystemItem: .refresh, target: self, action: #selector(reset))
         
         currentAnswer = UILabel()
         currentAnswer.text = "????????"
@@ -90,6 +89,8 @@ class ViewController: UIViewController {
             guard let letter = ac?.textFields?[0].text else { return }
             if !(letter.count == 1) {
                 self?.showError()
+            } else {
+                self?.answer(letter.uppercased())
             }
         }
         ac.addAction(submitButton)
@@ -108,5 +109,63 @@ class ViewController: UIViewController {
         present(ac, animated: true)
     }
     
+    func answer(_ lett: String) {
+        currentAnswer.text = ""
+        usedLetters.append(lett)
+        
+        life -= 1
+        if life == 0 {
+            lose()
+        }
+        
+        for letter in word {
+            let strLetter = String(letter)
+            
+            if usedLetters.contains(strLetter) {
+                currentAnswer.text! += strLetter
+            } else {
+                currentAnswer.text! += "?"
+            }
+        }
+        
+        if currentAnswer.text == word {
+            usedLetters.removeAll(keepingCapacity: true)
+            rightAnswer()
+            
+            arrayData.shuffle()
+            word = arrayData[0].uppercased()
+            life = 8
+            score += 1
+        }
+    }
+ 
+    func rightAnswer() {
+        let ac = UIAlertController(title: "Good", message: "Your answer is correct, \(word.uppercased())", preferredStyle: .alert)
+        
+        let nextButton = UIAlertAction(title: "Next", style: .default)
+        ac.addAction(nextButton)
+        
+        present(ac, animated: true)
+    }
+    
+    func lose() {
+        let ac = UIAlertController(title: "You Lose", message: "Right answer is : \(word)", preferredStyle: .alert)
+        
+        let tryAgainButton = UIAlertAction(title: "Try Again", style: .default) { [weak self] action in
+            self?.reset()
+        }
+        ac.addAction(tryAgainButton)
+        
+        present(ac, animated: true)
+    }
+    
+    @objc func reset() {
+        arrayData.shuffle()
+        word = arrayData[0].uppercased()
+        
+        usedLetters.removeAll(keepingCapacity: true)
+        score = 0
+        life = 8
+    }
 }
 
