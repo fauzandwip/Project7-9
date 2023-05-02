@@ -28,7 +28,9 @@ class ViewController: UIViewController {
     
     var word = "RHYTHM" {
         didSet {
-            currentAnswer.text! = String(repeating: "?", count: word.count)
+            DispatchQueue.main.async {
+                self.currentAnswer.text! = String(repeating: "?", count: self.word.count)
+            }
         }
     }
     
@@ -69,7 +71,7 @@ class ViewController: UIViewController {
             submitButton.centerXAnchor.constraint(equalTo: currentAnswer.centerXAnchor)
         ])
            
-        loadData()
+        performSelector(inBackground: #selector(loadData), with: nil)
     }
     
     @objc func loadData() {
